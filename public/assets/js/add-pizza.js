@@ -62,7 +62,6 @@ const handlePizzaSubmit = event => {
   })
     .then(response => response.json())
     .then(postResponse => {
-      alert('Pizza created successfully!');
       console.log(postResponse);
     })
     .catch(err => {
@@ -73,4 +72,3 @@ const handlePizzaSubmit = event => {
 
 $pizzaForm.addEventListener('submit', handlePizzaSubmit);
 $addToppingBtn.addEventListener('click', handleAddTopping);
-

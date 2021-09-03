@@ -2,59 +2,65 @@ const { Schema, model, Types } = require('mongoose');
 const dateFormat = require('../utils/dateFormat');
 
 const ReplySchema = new Schema(
-    {
-        // set custon id to avoid confustion with parent comment _id
-        replyId: {
-            type: Schema.Types.ObjectId,
-            default: () => new Types.ObjectId()
-        },
-        replyBody: {
-            type: String
-        },
-        writtenBy: {
-            type: String
-        },
-        createdAt: {
-            type: Date,
-            default: Date.now,
-            get: createdAtVal => dateFormat(createdAtVal)
-        }
+  {
+    // set custom id to avoid confusion with parent comment _id
+    replyId: {
+      type: Schema.Types.ObjectId,
+      default: () => new Types.ObjectId()
     },
-    {
-        toJSON: {
-            getters: true,
-        },
-    }
-);
-
-const CommentSchema = new Schema({
+    replyBody: {
+      type: String,
+      required: 'You need to provide a comment!',
+    },
     writtenBy: {
-        type: String
-    },
-    commentBody: {
-        type: String
+      type: String,
+      required: true,
+      trim: true
     },
     createdAt: {
-        type: Date,
-        default: Date.now,
-        get: createdAtVal => dateFormat(createdAtVal)
-    },
-      // use ReplySchema to validate data for a reply
-    replies: [ReplySchema]
-
-},
-{
-     toJSON: {
-        virtuals: true,
-        getters: true
-    },
-        id: false
-}
+      type: Date,
+      default: Date.now,
+      get: createdAtVal => dateFormat(createdAtVal)
+    }
+  },
+  {
+    toJSON: {
+      getters: true
+    }
+  }
 );
 
-// get total count of replies on comments
+const CommentSchema = new Schema(
+  {
+    writtenBy: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    commentBody: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      get: createdAtVal => dateFormat(createdAtVal)
+    },
+    // use ReplySchema to validate data for a reply
+    replies: [ReplySchema]
+  },
+  {
+    toJSON: {
+      virtuals: true,
+      getters: true
+    },
+    id: false
+  }
+);
+
 CommentSchema.virtual('replyCount').get(function() {
-    return this.replies.length;
+  return this.replies.length;
 });
 
 const Comment = model('Comment', CommentSchema);
